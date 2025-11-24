@@ -1,6 +1,7 @@
+# tests/testcases/test_login.py
 from pytest_check import check
 
-from tests.actions.login_actions import LoginActions
+from tests.src.actions.login_actions import LoginActions
 
 
 def test_login_success(page):

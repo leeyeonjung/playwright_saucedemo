@@ -1,3 +1,4 @@
+# tests/src/locator/cart_locators.py
 """장바구니 페이지 요소 locators"""
 
 # 장바구니 아이템 정보

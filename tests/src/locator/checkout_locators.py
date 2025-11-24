@@ -1,3 +1,4 @@
+# tests/src/locator/checkout_locators.py
 """체크아웃 페이지 요소 locators"""
 
 # ========== Checkout Step One (사용자 정보 입력) ==========

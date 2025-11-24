@@ -1,6 +1,7 @@
+# tests/src/actions/product_detail_actions.py
 import logging
-from tests.locator import product_detail_locators
-from tests.actions.inventory_actions import InventoryActions
+from tests.src.locator import product_detail_locators
+from tests.src.actions.inventory_actions import InventoryActions
 
 logger = logging.getLogger(__name__)
 

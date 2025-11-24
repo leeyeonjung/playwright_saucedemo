@@ -1,6 +1,7 @@
+# tests/src/actions/checkout_actions.py
 import logging
-from tests.locator import checkout_locators
-from tests.actions.cart_actions import CartActions
+from tests.src.locator import checkout_locators
+from tests.src.actions.cart_actions import CartActions
 
 logger = logging.getLogger(__name__)
 

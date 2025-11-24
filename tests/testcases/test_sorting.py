@@ -1,6 +1,7 @@
+# tests/testcases/test_sorting.py
 from pytest_check import check
 
-from tests.actions.inventory_actions import InventoryActions
+from tests.src.actions.inventory_actions import InventoryActions
 
 
 def test_sort_by_name_az(page):

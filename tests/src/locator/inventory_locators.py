@@ -1,3 +1,4 @@
+# tests/src/locator/inventory_locators.py
 """인벤토리(상품 목록) 페이지 요소 locators"""
 
 # 정렬 및 상품 목록

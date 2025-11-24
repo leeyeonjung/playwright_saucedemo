@@ -1,5 +1,6 @@
+# tests/src/actions/login_actions.py
 import logging
-from tests.locator import login_locators
+from tests.src.locator import login_locators
 
 logger = logging.getLogger(__name__)
 

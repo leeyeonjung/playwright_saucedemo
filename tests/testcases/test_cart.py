@@ -1,7 +1,8 @@
+# tests/testcases/test_cart.py
 from pytest_check import check
 
-from tests.actions.cart_actions import CartActions
-from tests.actions.inventory_actions import InventoryActions
+from tests.src.actions.cart_actions import CartActions
+from tests.src.actions.inventory_actions import InventoryActions
 
 
 def test_add_single_product_to_cart(page):

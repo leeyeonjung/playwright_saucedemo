@@ -1,3 +1,4 @@
+# tests/src/locator/login_locators.py
 """로그인 페이지 요소 locators"""
 
 # 로그인 입력 필드

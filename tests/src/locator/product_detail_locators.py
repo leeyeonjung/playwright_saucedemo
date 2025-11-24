@@ -1,3 +1,4 @@
+# tests/src/locator/product_detail_locators.py
 """상품 상세 페이지 요소 locators"""
 
 # 상품 정보

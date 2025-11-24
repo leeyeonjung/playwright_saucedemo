@@ -1,6 +1,7 @@
+# tests/testcases/test_checkout.py
 from pytest_check import check
 
-from tests.actions.checkout_actions import CheckoutActions
+from tests.src.actions.checkout_actions import CheckoutActions
 
 
 def test_checkout_step_one_title(page):

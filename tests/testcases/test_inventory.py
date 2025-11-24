@@ -1,7 +1,8 @@
+# tests/testcases/test_inventory.py
 from pytest_check import check
 
-from tests.actions.inventory_actions import InventoryActions
-from tests.actions.product_detail_actions import ProductDetailActions
+from tests.src.actions.inventory_actions import InventoryActions
+from tests.src.actions.product_detail_actions import ProductDetailActions
 
 
 def test_product_images_loaded(page):
