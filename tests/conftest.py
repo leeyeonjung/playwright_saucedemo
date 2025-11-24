@@ -1,6 +1,8 @@
-from playwright.sync_api import sync_playwright
-import pytest
+from pathlib import Path
 from datetime import datetime
+
+import pytest
+from playwright.sync_api import sync_playwright
 
 
 def pytest_configure(config):
@@ -9,9 +11,19 @@ def pytest_configure(config):
     Args:
         config: pytest 설정 객체
     """
-    execution_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    config._metadata["Execution Date"] = execution_date
-    config._metadata["title"] = f"Sauce Demo Test Report - {execution_date}"
+    now = datetime.now()
+    execution_date = now.strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+    metadata = getattr(config, "_metadata", None)
+    if metadata is not None:
+        metadata["Execution Date"] = execution_date
+        metadata["title"] = f"Sauce Demo Test Report - {execution_date}"
+
+    report_dir = Path("tests") / "Results"
+    report_dir.mkdir(parents=True, exist_ok=True)
+    report_path = report_dir / f"report_{timestamp}.html"
+    config.option.htmlpath = str(report_path)
 
 
 @pytest.fixture(scope="session")
