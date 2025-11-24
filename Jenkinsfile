@@ -20,8 +20,6 @@ pipeline {
                         echo [2] 가상환경 활성화
                         source $VENV
 
-                        echo [3] pip 업그레이드
-                        pip install --upgrade pip
                     "
                 '''
             }
