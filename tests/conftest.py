@@ -46,9 +46,9 @@ def browser(playwright_instance):
         playwright_instance: Playwright 인스턴스
         
     Yields:
-        browser: Chromium 브라우저 인스턴스 (headless=False로 브라우저 화면 표시)
+        browser: Chromium 브라우저 인스턴스 (headless=True로 브라우저 화면 숨김)
     """
-    browser = playwright_instance.chromium.launch(headless=False)  # headless=False로 변경하여 브라우저 화면 표시
+    browser = playwright_instance.chromium.launch(headless=True)  # headless=True로 변경하여 브라우저 화면 숨김
     yield browser
     browser.close()
 
