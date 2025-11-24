@@ -75,6 +75,8 @@ def test_product_detail_page_image_loaded(page):
     detail.navigate_to_product_detail(0)
     
     is_loaded = detail.check_product_image_loaded()
+    import logging
+    logging.info(f"Product detail image loaded: {is_loaded}")
     check.equal(is_loaded, True, "Product detail image should be loaded")
 
 

@@ -5,7 +5,7 @@
 PRODUCT_NAME = ".inventory_details_name"  # 상품 이름
 PRODUCT_PRICE = ".inventory_details_price"  # 상품 가격
 PRODUCT_DESCRIPTION = ".inventory_details_desc"  # 상품 설명
-PRODUCT_IMAGE = ".inventory_details_img img"  # 상품 이미지
+PRODUCT_IMAGE = "img.inventory_details_img"  # 상품 이미지
 
 # 액션 버튼
 ADD_TO_CART_BUTTON = "button[data-test*='add-to-cart']"  # 장바구니에 추가 버튼

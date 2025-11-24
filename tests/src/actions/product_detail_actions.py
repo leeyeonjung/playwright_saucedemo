@@ -1,5 +1,6 @@
 # tests/src/actions/product_detail_actions.py
 import logging
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from tests.src.locator import product_detail_locators
 from tests.src.actions.inventory_actions import InventoryActions
 
@@ -24,6 +25,13 @@ class ProductDetailActions:
         inventory = InventoryActions(self.page)
         inventory.login_and_navigate_to_inventory(username, password)
         inventory.click_product_by_index(product_index)
+        # 상세 페이지가 완전히 로드될 때까지 대기
+        self.page.wait_for_load_state("networkidle")
+        self.page.wait_for_selector(
+            product_detail_locators.PRODUCT_IMAGE,
+            state="visible",
+            timeout=10000,
+        )
         logger.info("상품 상세 페이지 이동 완료")
 
 
@@ -54,13 +62,22 @@ class ProductDetailActions:
     def check_product_image_loaded(self) -> bool:
         """상품 이미지가 로드되었는지 확인"""
         logger.debug("상품 이미지 로드 확인")
-        image = self.page.locator(product_detail_locators.PRODUCT_IMAGE)
-        if image.count() > 0:
-            is_loaded = image.evaluate("img => img.complete && img.naturalWidth > 0")
-            logger.debug(f"상품 이미지 로드 상태: {is_loaded}")
-            return is_loaded
-        logger.warning("상품 이미지를 찾을 수 없음")
-        return False
+
+        image_element = self.page.wait_for_selector(
+            product_detail_locators.PRODUCT_IMAGE,
+            state="visible",
+            timeout=10000,
+        )
+
+        self.page.wait_for_function(
+            """
+            img => img && img.complete && img.naturalWidth > 0
+            """,
+            arg=image_element,
+            timeout=10000,
+        )
+        logger.debug("상품 이미지 로드 완료 확인")
+        return True
 
 
     def click_back_to_products(self):
