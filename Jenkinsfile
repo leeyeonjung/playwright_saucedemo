@@ -12,46 +12,47 @@ pipeline {
 
         stage('Prepare Environment') {
             steps {
-                sh '''
-                echo "[1] 프로젝트 폴더 이동"
-                cd $PROJECT_ROOT
+                sh(script: '''
+                    echo "[1] 프로젝트 폴더 이동"
+                    cd "$PROJECT_ROOT"
 
-                echo "[2] 가상환경 활성화"
-                source $VENV
+                    echo "[2] 가상환경 활성화"
+                    source "$VENV"
 
-                echo "[3] 패키지 최신화 (optional)"
-                pip install --upgrade pip
-                '''
+                ''', shell: '/bin/bash')
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                echo "[4] 테스트 실행"
-                cd $TEST_DIR
+                sh(script: '''
+                    echo "[4] 테스트 실행"
+                    cd "$TEST_DIR"
 
-                # 가상환경 python 직접 실행
-                /home/ubuntu/saucedemo/saucedemo_pytest/bin/python -m pytest -v || true
-                '''
+                    echo "[4-1] 가상환경 활성화"
+                    source "$VENV"
+
+                    echo "[4-2] pytest 실행"
+                    pytest -v || true
+                ''', shell: '/bin/bash')
             }
         }
 
         stage('Collect Latest Report') {
             steps {
-                sh '''
-                echo "[5] 가장 최근 HTML 리포트 찾기"
+                sh(script: '''
+                    echo "[5] 가장 최근 HTML 리포트 찾기"
 
-                cd $RESULT_DIR
+                    cd "$RESULT_DIR"
 
-                # 최신 HTML 파일 1개 추출
-                LATEST_HTML=$(ls -t *.html | head -n 1)
+                    # 최신 파일 하나 찾기
+                    LATEST_HTML=$(ls -t *.html | head -n 1)
 
-                echo "가장 최근 리포트: $LATEST_HTML"
+                    echo "가장 최근 리포트: $LATEST_HTML"
 
-                # Jenkins가 읽을 수 있는 workspace로 복사
-                cp "$RESULT_DIR/$LATEST_HTML" "$WORKSPACE/"
-                '''
+                    # Jenkins workspace에 복사
+                    cp "$RESULT_DIR/$LATEST_HTML" "$WORKSPACE/"
+                ''', shell: '/bin/bash')
             }
         }
     }
@@ -59,7 +60,6 @@ pipeline {
     post {
         always {
             echo "[6] HTML Report Archive"
-
             archiveArtifacts artifacts: '*.html', fingerprint: true
         }
     }
