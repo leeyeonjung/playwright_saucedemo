@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'web' }
+    agent { label 'web_linux' }
 
     environment {
         PROJECT_ROOT = "/home/ubuntu/saucedemo"
