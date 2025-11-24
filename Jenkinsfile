@@ -8,8 +8,31 @@ pipeline {
         VENV = "/home/ubuntu/saucedemo/saucedemo_pytest/bin/activate"
     }
 
+    triggers {
+        githubPush()
+    }
+
     stages {
 
+        /* -------------------------
+           1) 변경 없으면 Skip → ABORTED
+        -------------------------- */
+        stage('Skip Info') {
+            when {
+                not { changeset pattern: "playwright_saucedemo/**", comparator: "ANT" }
+            }
+            steps {
+                echo "🟡 No changes → Skipping test execution."
+                script {
+                    currentBuild.result = 'ABORTED'
+                    error("Stop remaining stages due to no changes.")
+                }
+            }
+        }
+
+        /* -------------------------
+           2) 환경 준비
+        -------------------------- */
         stage('Prepare Environment') {
             steps {
                 sh '''
@@ -22,12 +45,14 @@ pipeline {
 
                         echo [3] Playwright 브라우저 설치
                         playwright install chromium
-
                     "
                 '''
             }
         }
 
+        /* -------------------------
+           3) 테스트 실행
+        -------------------------- */
         stage('Run Tests') {
             steps {
                 sh '''
@@ -41,37 +66,54 @@ pipeline {
             }
         }
 
+        /* -------------------------
+           4) 최신 HTML report 복사
+        -------------------------- */
         stage('Collect Latest Report') {
             steps {
-                sh(
-                    script: """
-                        /bin/bash -c '
-                            echo "[5] 최신 HTML 리포트 찾기"
-                            cd "$RESULT_DIR"
+                script {
+                    if (currentBuild.result == 'ABORTED') {
+                        echo "⏩ Build aborted → Skipping report collection."
+                        return
+                    }
+                }
 
-                            LATEST_HTML=\$(ls -t *.html 2>/dev/null | head -n 1)
+                sh '''
+                    /bin/bash -c '
+                        echo "[5] 최신 HTML 리포트 찾기"
+                        cd "$RESULT_DIR"
 
-                            if [ -z "\$LATEST_HTML" ]; then
-                                echo "❌ HTML 리포트 없음"
-                                exit 0
-                            fi
+                        LATEST_HTML=$(ls -t *.html 2>/dev/null | head -n 1)
 
-                            echo "가장 최근 리포트: \$LATEST_HTML"
+                        if [ -z "$LATEST_HTML" ]; then
+                            echo "❌ HTML 리포트 없음"
+                            exit 0
+                        fi
 
-                            echo "복사 대상 경로: $WORKSPACE/\$LATEST_HTML"
+                        echo "가장 최근 리포트: $LATEST_HTML"
 
-                            cp "$RESULT_DIR/\$LATEST_HTML" "$WORKSPACE/\$LATEST_HTML"
-                        '
-                    """
-                )
+                        cp "$RESULT_DIR/$LATEST_HTML" "$WORKSPACE/$LATEST_HTML"
+                        echo "✅ 복사 완료"
+                    '
+                '''
             }
         }
     }
 
+    /* -------------------------
+       5) post 블록: ABORTED 시 스킵
+    -------------------------- */
     post {
         always {
+            script {
+                if (currentBuild.result == 'ABORTED') {
+                    echo "⏩ Post block skipped (build was aborted)."
+                    return
+                }
+            }
+
             echo "[6] HTML Report Archive"
-            archiveArtifacts artifacts: '*.html', fingerprint: true
+            archiveArtifacts artifacts: '*.html', fingerprint: true, onlyIfSuccessful: false
         }
     }
 }
