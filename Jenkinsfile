@@ -30,8 +30,9 @@ pipeline {
                 sh '''
                 echo "[4] 테스트 실행"
                 cd $TEST_DIR
-                source $VENV
-                pytest -v || true
+
+                # 가상환경 python 직접 실행
+                /home/ubuntu/saucedemo/saucedemo_pytest/bin/python -m pytest -v || true
                 '''
             }
         }
