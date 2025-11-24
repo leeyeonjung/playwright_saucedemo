@@ -47,7 +47,6 @@ pipeline {
                     script: """
                         /bin/bash -c '
                             echo "[5] 최신 HTML 리포트 찾기"
-                            
                             cd "$RESULT_DIR"
 
                             LATEST_HTML=\$(ls -t *.html 2>/dev/null | head -n 1)
@@ -59,13 +58,15 @@ pipeline {
 
                             echo "가장 최근 리포트: \$LATEST_HTML"
 
-                            cp "$RESULT_DIR/\$LATEST_HTML" "$WORKSPACE/"
+                            echo "복사 대상 경로: $WORKSPACE/\$LATEST_HTML"
+
+                            cp "$RESULT_DIR/\$LATEST_HTML" "$WORKSPACE/\$LATEST_HTML"
                         '
                     """
-                    )
-                }
+                )
             }
         }
+    }
 
     post {
         always {
