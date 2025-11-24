@@ -2,7 +2,7 @@
 """인벤토리(상품 목록) 페이지 요소 locators"""
 
 # 정렬 및 상품 목록
-SORT_DROPDOWN = "[data-test='product_sort_container']"  # 상품 정렬 드롭다운 (이름/가격 정렬)
+SORT_DROPDOWN = "[data-test='product-sort-container'], .product_sort_container"  # 상품 정렬 드롭다운 (이름/가격 정렬)
 INVENTORY_ITEM = ".inventory_item"  # 개별 상품 아이템 컨테이너
 INVENTORY_ITEM_NAME = ".inventory_item_name"  # 상품 이름
 INVENTORY_ITEM_PRICE = ".inventory_item_price"  # 상품 가격
