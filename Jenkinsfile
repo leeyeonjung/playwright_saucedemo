@@ -43,27 +43,29 @@ pipeline {
 
         stage('Collect Latest Report') {
             steps {
-                sh '''
-                    /bin/bash -c "
-                        echo '[5] 최신 HTML 리포트 찾기'
-                        
-                        cd \"$RESULT_DIR\"
+                sh(
+                    script: """
+                        /bin/bash -c '
+                            echo "[5] 최신 HTML 리포트 찾기"
+                            
+                            cd "$RESULT_DIR"
 
-                        LATEST_HTML=$(ls -t *.html 2>/dev/null | head -n 1)
+                            LATEST_HTML=\$(ls -t *.html 2>/dev/null | head -n 1)
 
-                        if [ -z \"$LATEST_HTML\" ]; then
-                            echo '❌ HTML 리포트 없음'
-                            exit 0
-                        fi
+                            if [ -z "\$LATEST_HTML" ]; then
+                                echo "❌ HTML 리포트 없음"
+                                exit 0
+                            fi
 
-                        echo 가장 최근 리포트: $LATEST_HTML
+                            echo "가장 최근 리포트: \$LATEST_HTML"
 
-                        cp \"$RESULT_DIR/$LATEST_HTML\" \"$WORKSPACE/\"
-                    "
-                '''
+                            cp "$RESULT_DIR/\$LATEST_HTML" "$WORKSPACE/"
+                        '
+                    """
+                    )
+                }
             }
         }
-    }
 
     post {
         always {
