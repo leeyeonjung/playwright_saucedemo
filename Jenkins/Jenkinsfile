@@ -9,7 +9,7 @@ pipeline {
 
         stage('Skip Info') {
             when {
-                not { changeset pattern: "playwright_saucedemo/**", comparator: "ANT" }
+                not { changeset pattern: "jenkins_test_repo/**", comparator: "ANT" }
             }
             steps {
                 echo "No changes → skipping tests."
