@@ -1,7 +1,8 @@
 pipeline {
     agent none
 
-    triggers { githubPush() }
+    // ❌ githubPush() 제거 (Generic Webhook Trigger 방식에서는 필요 없음)
+    triggers { }
 
     environment {
         PREFIX_LINUX   = "Linux_report_${BUILD_NUMBER}_"
@@ -10,19 +11,10 @@ pipeline {
 
     stages {
 
-        stage('Skip Check') {
-            when { not { changeset pattern: "jenkins_test_repo/**", comparator: "ANT" } }
-            steps {
-                echo "No changes → skip"
-                script {
-                    env.SKIP = "true"
-                    currentBuild.result = "ABORTED"
-                }
-            }
-        }
-
         stage('Run Tests') {
-            when { expression { env.SKIP != "true" } }
+
+            // Generic Webhook Trigger가 조건 맞을 때만 Job 실행되므로
+            // Jenkinsfile에서 skip 로직은 삭제함
             parallel {
 
                 stage('Linux') {
@@ -30,9 +22,11 @@ pipeline {
                     steps {
                         sh "chmod +x Jenkins/ci/linux_*.sh"
                         sh "Jenkins/ci/linux_run.sh ${PREFIX_LINUX}"
+
                         script {
-                            if (fileExists("${PREFIX_LINUX}*.html"))
+                            if (fileExists("${PREFIX_LINUX}*.html")) {
                                 stash name: "linux", includes: "${PREFIX_LINUX}*.html"
+                            }
                         }
                     }
                 }
@@ -41,29 +35,27 @@ pipeline {
                     agent { label 'web_windows' }
                     steps {
                         bat "Jenkins\\ci\\win_run.bat %PREFIX_WINDOWS%"
+
                         script {
-                            def cnt = bat(script:"dir /b ${PREFIX_WINDOWS}*.html 2>nul | find /c /v \"\"",
-                                           returnStdout:true).trim()
-                            if (cnt != "0")
+                            def cnt = bat(
+                                script: "dir /b ${PREFIX_WINDOWS}*.html 2>nul | find /c /v \"\"",
+                                returnStdout: true
+                            ).trim()
+
+                            if (cnt != "0") {
                                 stash name: "windows", includes: "${PREFIX_WINDOWS}*.html"
+                            }
                         }
                     }
                 }
-
             }
         }
     }
 
     post {
         always {
+            // 리포트는 Linux 노드에서만 아카이빙
             node('web_linux') {
-
-                script {
-                    if (currentBuild.result == "ABORTED") {
-                        echo "Post skipped"
-                        return
-                    }
-                }
 
                 script {
                     try { unstash "linux" } catch(e){}
