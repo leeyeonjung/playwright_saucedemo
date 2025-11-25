@@ -9,7 +9,7 @@ pipeline {
 
         stage('Skip Info') {
             when {
-                not { changeset pattern: "jenkins_test_repo/**", comparator: "ANT" }
+                not { changeset pattern: "playwright_saucedemo/**", comparator: "ANT" }
             }
             steps {
                 echo "No changes → skipping tests."
@@ -27,19 +27,19 @@ pipeline {
                 stage('Linux') {
                     agent { label 'web_linux' }
                     steps {
-                        sh "chmod +x ci/linux_*.sh"
-                        sh "ci/linux_setup.sh"
-                        sh "ci/linux_test.sh"
-                        sh "ci/linux_collect.sh"
+                        sh "chmod +x Jenkins/ci/linux_*.sh"
+                        sh "Jenkins/ci/linux_setup.sh"
+                        sh "Jenkins/ci/linux_test.sh"
+                        sh "Jenkins/ci/linux_collect.sh"
                     }
                 }
 
                 stage('Windows') {
                     agent { label 'web_windows' }
                     steps {
-                        bat "ci\\win_setup.bat"
-                        bat "ci\\win_test.bat"
-                        bat "ci\\win_collect.bat"
+                        bat "Jenkins\\ci\\win_setup.bat"
+                        bat "Jenkins\\ci\\win_test.bat"
+                        bat "Jenkins\\ci\\win_collect.bat"
                     }
                 }
 
