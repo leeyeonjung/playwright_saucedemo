@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "[Linux] Moving to project root"
+cd /home/ubuntu/saucedemo
+
+echo "[Linux] Activating venv"
+source /home/ubuntu/saucedemo/saucedemo_pytest/bin/activate
+
+echo "[Linux] Installing Playwright browser"
+playwright install chromium

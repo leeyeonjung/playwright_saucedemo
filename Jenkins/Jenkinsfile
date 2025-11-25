@@ -1,0 +1,64 @@
+pipeline {
+    agent none
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+
+        stage('Skip Info') {
+            when {
+                not { changeset pattern: "playwright_saucedemo/**", comparator: "ANT" }
+            }
+            steps {
+                echo "No changes → skipping tests."
+                script {
+                    env.SKIP_BUILD = "true"
+                    currentBuild.result = 'ABORTED'
+                }
+            }
+        }
+
+        stage('Parallel Tests') {
+            when { expression { return env.SKIP_BUILD != "true" } }
+            parallel {
+
+                stage('Linux') {
+                    agent { label 'web_linux' }
+                    steps {
+                        sh "chmod +x ci/linux_*.sh"
+                        sh "ci/linux_setup.sh"
+                        sh "ci/linux_test.sh"
+                        sh "ci/linux_collect.sh"
+                    }
+                }
+
+                stage('Windows') {
+                    agent { label 'web_windows' }
+                    steps {
+                        bat "ci\\win_setup.bat"
+                        bat "ci\\win_test.bat"
+                        bat "ci\\win_collect.bat"
+                    }
+                }
+
+            }
+        }
+    }
+
+    post {
+        always {
+            node('web_linux') {
+                script {
+                    if (currentBuild.result == 'ABORTED') {
+                        echo "Post skipped (aborted)."
+                        return
+                    }
+                }
+
+                archiveArtifacts artifacts: '*.html', fingerprint: true, onlyIfSuccessful: false
+            }
+        }
+    }
+}
