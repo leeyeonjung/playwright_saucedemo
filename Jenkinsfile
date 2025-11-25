@@ -19,9 +19,6 @@ pipeline {
 
     stages {
 
-        /* --------------------------------------------------------
-           1) 변경 없으면 Skip → ABORTED
-        --------------------------------------------------------- */
         stage('Skip Info') {
             when {
                 not { changeset pattern: "playwright_saucedemo/**", comparator: "ANT" }
@@ -35,13 +32,9 @@ pipeline {
             }
         }
 
-        /* --------------------------------------------------------
-           2) Linux + Windows 병렬 테스트
-        --------------------------------------------------------- */
         stage('Parallel Playwright Tests') {
             parallel {
 
-                /* ----------- Linux ----------- */
                 stage('Linux Playwright') {
                     agent { label 'web_linux' }
                     stages {
@@ -100,7 +93,6 @@ pipeline {
                     }
                 }
 
-                /* ----------- Windows ----------- */
                 stage('Windows Playwright') {
                     agent { label 'web_windows' }
                     stages {
@@ -154,20 +146,19 @@ pipeline {
         }
     }
 
-    /* --------------------------------------------------------
-       3) 전체 Post - ABORTED 시 스킵
-    --------------------------------------------------------- */
     post {
         always {
-            script {
-                if (currentBuild.result == 'ABORTED') {
-                    echo "⏩ Post block skipped (build was aborted)."
-                    return
+            node('web_linux') {
+                script {
+                    if (currentBuild.result == 'ABORTED') {
+                        echo "⏩ Post block skipped (build was aborted)."
+                        return
+                    }
                 }
-            }
 
-            echo "[POST] HTML Report Archive"
-            archiveArtifacts artifacts: '*.html', fingerprint: true, onlyIfSuccessful: false
+                echo "[POST] HTML Report Archive"
+                archiveArtifacts artifacts: '*.html', fingerprint: true, onlyIfSuccessful: false
+            }
         }
     }
 }
