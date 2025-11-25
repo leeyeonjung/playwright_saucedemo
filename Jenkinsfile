@@ -27,7 +27,7 @@ pipeline {
                 echo "🟡 No changes → Skipping all test executions."
                 script {
                     currentBuild.result = 'ABORTED'
-                    error("Stop remaining stages due to no changes.")
+                    echo "Stop remaining stages due to no changes."
                 }
             }
         }
