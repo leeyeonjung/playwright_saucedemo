@@ -12,11 +12,11 @@ playwright install chromium
 
 REM --- TEST ---
 echo [Windows] Run pytest
-cd C:\Automation\saucedemo\playwright_saucedemo
+cd C:\Automation\saucedemo
 pytest -v
 
 REM --- REPORT ---
-cd C:\Automation\saucedemo\playwright_saucedemo\tests\Results
+cd C:\Automation\saucedemo\tests\Results
 
 for /f "delims=" %%i in ('dir /b /od *.html') do set LATEST=%%i
 
