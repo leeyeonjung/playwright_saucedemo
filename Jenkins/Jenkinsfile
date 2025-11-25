@@ -1,9 +1,6 @@
 pipeline {
     agent none
 
-    // ❌ githubPush() 제거 (Generic Webhook Trigger 방식에서는 필요 없음)
-    triggers { }
-
     environment {
         PREFIX_LINUX   = "Linux_report_${BUILD_NUMBER}_"
         PREFIX_WINDOWS = "Windows_report_${BUILD_NUMBER}_"
