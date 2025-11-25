@@ -10,8 +10,6 @@ pipeline {
 
         stage('Run Tests') {
 
-            // Generic Webhook Trigger가 조건 맞을 때만 Job 실행되므로
-            // Jenkinsfile에서 skip 로직은 삭제함
             parallel {
 
                 stage('Linux') {
@@ -51,7 +49,7 @@ pipeline {
 
     post {
         always {
-            // 리포트는 Linux 노드에서만 아카이빙
+
             node('web_linux') {
 
                 script {
